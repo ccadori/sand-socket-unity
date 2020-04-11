@@ -154,6 +154,13 @@ namespace Sand
 			}
 		}
 
+		public void SetDelimiters(string packetDelimiter, string eventDelimiter)
+		{
+			this.packetDelimiter = packetDelimiter;
+			this.eventDelimiter = eventDelimiter;
+			reader.delimiter = packetDelimiter;
+		}
+
 		private void OnDestroy()
 		{
 			if (clientReceiveThread != null)

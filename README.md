@@ -34,3 +34,17 @@ public void OnChat(string data) {
 }
 
 ```
+
+## Delimiters
+
+If you changed the package or event delimiter in the server, you'll need to change it in the client too.
+
+```C#
+public Sand.Client client;
+
+public void Start() {
+  // Starting the server
+  client.Connect();
+  client.SetDelimiters("packetDelimiter", "eventDelimiter");
+}
+```

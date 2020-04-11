@@ -6,7 +6,7 @@ namespace Sand
     public class Reader
     {
         public string Buffer { get; private set; }
-        private readonly string delimiter;
+        public string delimiter;
         private readonly Action<string> onReadLine;
 
         public Reader(Action<string> onReadLine, string delimiter)
