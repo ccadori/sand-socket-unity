@@ -29,8 +29,8 @@ namespace Sand
 		public float queueReadingRate = 0.1f;
 		public string host = "localhost";
 		public int port = 3000;
-		public string eventDelimiter = "#e#";
-		public string packetDelimiter = "\n";
+		private string eventDelimiter = "#e#";
+		private string packetDelimiter = "\n";
 
 		private TcpClient socketConnection;
 		private Thread clientReceiveThread;
@@ -123,7 +123,7 @@ namespace Sand
 
 			lock (queuedMessages)
 			{
-				queuedMessages.Add(new Message(splitedData[0], splitedData[2]));
+				queuedMessages.Add(new Message(splitedData[0], splitedData[1]));
 			}
 		}
 
@@ -144,7 +144,7 @@ namespace Sand
 				NetworkStream stream = socketConnection.GetStream();
 				if (stream.CanWrite)
 				{
-					byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(eventName + "@@" + payload + "\n");
+					byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(eventName + eventDelimiter + payload + packetDelimiter);
 					stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
 				}
 			}
@@ -156,9 +156,14 @@ namespace Sand
 
 		private void OnDestroy()
 		{
-			clientReceiveThread.Abort();
-			socketConnection.Close();
-			StopCoroutine(queueReadingRoutine);
+			if (clientReceiveThread != null)
+				clientReceiveThread.Abort();
+			
+			if (socketConnection != null)
+				socketConnection.Close();
+
+			if (queueReadingRoutine != null)
+				StopCoroutine(queueReadingRoutine);
 		}
 	}
 }
