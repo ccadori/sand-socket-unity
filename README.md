@@ -4,7 +4,7 @@ Sand Unity is a Unity3D client for [Sand](https://github.com/ccadori/sand-socket
 
 ## Installing
 
-As long as Sand Unity is a UPM, all you need to do is to add a package to your project with this repo url.
+As long as Sand Unity is a UPM, all you need to do is to add a package to your project with this repo url (dont forget the .git extension).
 
 ## Usage
 
@@ -34,6 +34,10 @@ public void OnChat(string data) {
 }
 
 ```
+
+## Examples
+
+For full examples with server and client you can visit [this repository](https://github.com/ccadori/sand-socket-examples).
 
 ## Delimiters
 
