@@ -5,38 +5,38 @@ namespace Sand
 {
     public class EventEmitter
     {
-        private Dictionary<string, Action<string>> eventDictionary;
+        public Dictionary<string, Action<string>> EventDictionary { get; private set; }
 
         public EventEmitter()
         {
-            this.eventDictionary = new Dictionary<string, Action<string>>();
+            this.EventDictionary = new Dictionary<string, Action<string>>();
         }
 
         public void On(string eventName, Action<string> action)
         {
-            if (eventDictionary.ContainsKey(eventName))
+            if (EventDictionary.ContainsKey(eventName))
             {
-                eventDictionary[eventName] += action;
+                EventDictionary[eventName] += action;
             }
             else
             {
-                eventDictionary.Add(eventName, action);
+                EventDictionary.Add(eventName, action);
             }
         }
 
         public void Emit(string eventName, string payload)
         {
-            if (eventDictionary.ContainsKey(eventName))
+            if (EventDictionary.ContainsKey(eventName) && EventDictionary[eventName] != null)
             {
-                eventDictionary[eventName].Invoke(payload);
+                EventDictionary[eventName].Invoke(payload);
             }
         }
 
         public void RemoveListener(string eventName, Action<string> action)
         {
-            if (eventDictionary.ContainsKey(eventName))
+            if (EventDictionary.ContainsKey(eventName))
             {
-                eventDictionary[eventName] -= action;
+                EventDictionary[eventName] -= action;
             }
         }
     }

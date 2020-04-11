@@ -5,6 +5,7 @@ using System.Collections;
 using System.Text;
 using System.Threading;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 namespace Sand
 {
@@ -28,8 +29,8 @@ namespace Sand
 		public float queueReadingRate = 0.1f;
 		public string host = "localhost";
 		public int port = 3000;
-		public char[] eventDelimiter = ("#e#").ToCharArray();
-		public char[] packetDelimiter = ("\n").ToCharArray();
+		public string eventDelimiter = "#e#";
+		public string packetDelimiter = "\n";
 
 		private TcpClient socketConnection;
 		private Thread clientReceiveThread;
@@ -118,7 +119,7 @@ namespace Sand
 
 		private void OnReadLine(string data)
 		{
-			string[] splitedData = data.Split(eventDelimiter);
+			string[] splitedData = Regex.Split(data, eventDelimiter);
 
 			lock (queuedMessages)
 			{

@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Sand
 {
     public class Reader
     {
-        private string buffer = "";
-        private readonly char[] delimiter;
+        public string Buffer { get; private set; }
+        private readonly string delimiter;
         private readonly Action<string> onReadLine;
 
-        public Reader(Action<string> onReadLine, char[] delimiter)
+        public Reader(Action<string> onReadLine, string delimiter)
         {
             this.onReadLine = onReadLine;
             this.delimiter = delimiter; ;
@@ -16,15 +17,26 @@ namespace Sand
 
         public void OnReceiveData(string data)
         {
-            string stringData = buffer + data;
-            string[] lines = stringData.Split(delimiter);
+            string stringData = Buffer + data;
+            string[] lines = Regex.Split(stringData, delimiter);
             int length = lines.Length - 1;
-            buffer = length > 1 ? lines[length] : "";
+            
+            if (length == 0)
+            {
+                Buffer = stringData;
+            }
+            else if (lines[length] != "")
+            {
+                Buffer = lines[length];
+            }
+            else
+            {
+                Buffer = "";
+            }
 
-            if (onReadLine != null)
+            if (onReadLine != null && length > 0)
                 for (int i = 0; i < length; i++)
                     onReadLine(lines[i]);
-
         }
     }
 }
