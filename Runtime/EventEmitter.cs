@@ -1,42 +1,43 @@
-﻿using System.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class EventEmitter
+namespace Sand
 {
-    private Dictionary<string, Action<string>> eventDictionary;
-
-    public EventEmitter()
+    public class EventEmitter
     {
-        this.eventDictionary = new Dictionary<string, Action<string>>();
-    }
+        private Dictionary<string, Action<string>> eventDictionary;
 
-    public void On(string eventName, Action<string> action)
-    {
-        if (eventDictionary.ContainsKey(eventName))
+        public EventEmitter()
         {
-            eventDictionary[eventName] += action;
+            this.eventDictionary = new Dictionary<string, Action<string>>();
         }
-        else
-        {
-            eventDictionary.Add(eventName, action);
-        }
-    }
 
-    public void Emit(string eventName, string payload)
-    {
-        if (eventDictionary.ContainsKey(eventName))
+        public void On(string eventName, Action<string> action)
         {
-            eventDictionary[eventName].Invoke(payload);
+            if (eventDictionary.ContainsKey(eventName))
+            {
+                eventDictionary[eventName] += action;
+            }
+            else
+            {
+                eventDictionary.Add(eventName, action);
+            }
         }
-    }
 
-    public void RemoveListener(string eventName, Action<string> action)
-    {
-        if (eventDictionary.ContainsKey(eventName))
+        public void Emit(string eventName, string payload)
         {
-            eventDictionary[eventName] -= action;
+            if (eventDictionary.ContainsKey(eventName))
+            {
+                eventDictionary[eventName].Invoke(payload);
+            }
+        }
+
+        public void RemoveListener(string eventName, Action<string> action)
+        {
+            if (eventDictionary.ContainsKey(eventName))
+            {
+                eventDictionary[eventName] -= action;
+            }
         }
     }
 }
