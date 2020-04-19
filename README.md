@@ -37,7 +37,7 @@ public void OnChat(string data) {
 
 ## Examples
 
-For full examples with server and client you can visit [this repository](https://github.com/ccadori/sand-socket-examples).
+For full examples with server and client please visit [this repository](https://github.com/ccadori/sand-socket-examples).
 
 ## Delimiters
 
@@ -52,3 +52,7 @@ public void Start() {
   client.SetDelimiters("packetDelimiter", "eventDelimiter");
 }
 ```
+
+## Roadmap
+
+- Use bytes instead of text as data format.
