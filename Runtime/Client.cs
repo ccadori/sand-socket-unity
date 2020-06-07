@@ -6,6 +6,10 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
+using System.IO;
 
 namespace Sand
 {
@@ -29,6 +33,9 @@ namespace Sand
 		public float queueReadingRate = 0.1f;
 		public string host = "localhost";
 		public int port = 3000;
+		public bool useTSL = false;
+		public bool leaveInnerStreamOpen = false;
+		public bool validateCert = true;
 		private string eventDelimiter = "#e#";
 		private string packetDelimiter = "\n";
 
@@ -90,17 +97,18 @@ namespace Sand
 				socketConnection = new TcpClient(host, port);
 				byte[] bytes = new byte[1024];
 
+				Stream stream = useTSL ? GetSSLStream(socketConnection) : GetStream(socketConnection);
+
+				if (stream == null) return;
+
 				while (true)
 				{
-					using (NetworkStream stream = socketConnection.GetStream())
+					int dataLength;
+					while ((dataLength = stream.Read(bytes, 0, bytes.Length)) != 0)
 					{
-						int dataLength;
-						while ((dataLength = stream.Read(bytes, 0, bytes.Length)) != 0)
-						{
-							byte[] incommingData = new byte[dataLength];
-							Array.Copy(bytes, 0, incommingData, 0, dataLength);
-							reader.OnReceiveData(Encoding.ASCII.GetString(incommingData));
-						}
+						byte[] incommingData = new byte[dataLength];
+						Array.Copy(bytes, 0, incommingData, 0, dataLength);
+						reader.OnReceiveData(Encoding.ASCII.GetString(incommingData));
 					}
 				}
 			}
@@ -108,6 +116,54 @@ namespace Sand
 			{
 				Debug.LogError("Socket exception: " + socketException);
 			}
+		}
+
+		private Stream GetStream(TcpClient client)
+		{
+			return client.GetStream();
+		}
+
+		private Stream GetSSLStream(TcpClient client)
+		{
+			SslStream stream = new SslStream(
+				socketConnection.GetStream(),
+				leaveInnerStreamOpen,
+				new RemoteCertificateValidationCallback(ValidateServerCertificate),
+				null
+			);
+
+			try
+			{
+				stream.AuthenticateAsClient(host);
+
+				return stream;
+			}
+			catch (AuthenticationException e)
+			{
+				Console.WriteLine("Exception: {0}", e.Message);
+
+				if (e.InnerException != null)
+				{
+					Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
+				}
+
+				Console.WriteLine("Authentication failed - closing the connection.");
+				
+				client.Close();
+
+				return null;
+			}
+		}
+
+		public bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		{
+			if (!validateCert) 
+				return true;
+			
+			if (sslPolicyErrors == SslPolicyErrors.None)
+				return true;
+
+			return false;
 		}
 
 		private void OnHandshake(string data)
