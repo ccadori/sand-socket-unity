@@ -33,7 +33,7 @@ namespace Sand
 		public float queueReadingRate = 0.1f;
 		public string host = "localhost";
 		public int port = 3000;
-		public bool useTSL = false;
+		public bool useTLS = false;
 		public bool leaveInnerStreamOpen = false;
 		public bool validateCert = true;
 		private string eventDelimiter = "#e#";
@@ -97,7 +97,7 @@ namespace Sand
 				socketConnection = new TcpClient(host, port);
 				byte[] bytes = new byte[1024];
 
-				Stream stream = useTSL ? GetSSLStream(socketConnection) : GetStream(socketConnection);
+				Stream stream = useTLS ? GetSSLStream(socketConnection) : GetStream(socketConnection);
 
 				if (stream == null) return;
 
