@@ -53,6 +53,33 @@ public void Start() {
 }
 ```
 
+## Using TLS
+
+You can easely use TLS in your client by defining the Client's property "useTLS" as true.
+
+```C#
+public Sand.Client client;
+
+public void Start() {
+  // Starting the server
+  client.useTLS = true;
+  client.Connect();
+}
+```
+
+PS: If you are using a self-signed certificate in your server, you'll have to define the Client's property "validateCert" as false, because Unity by default prevents this type of authentication triggering a cert error.
+
+```C#
+public Sand.Client client;
+
+public void Start() {
+  // Starting the server
+  client.useTLS = true;
+  client.validateCert = false;
+  client.Connect();
+}
+```
+
 ## Roadmap
 
 - Use bytes instead of text as data format.
