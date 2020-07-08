@@ -1,3 +1,5 @@
+[![openupm](https://img.shields.io/npm/v/com.ccadori.sandsocketunity?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.ccadori.sandsocketunity/)
+
 ## Sand Unity
 
 Sand Unity is a Unity3D client for [Sand](https://github.com/ccadori/sand-socket), built as a UPM (Unity Package Manager).
