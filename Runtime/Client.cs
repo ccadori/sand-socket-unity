@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Collections;
@@ -69,6 +69,25 @@ namespace Sand
 				Debug.LogError("On client connect exception " + e);
 			}
 		}
+
+		public void Disconnect()
+        {
+			try
+			{
+				if (clientReceiveThread != null)
+					clientReceiveThread.Abort();
+
+				if (socketConnection != null)
+					socketConnection.Close();
+
+				if (queueReadingRoutine != null)
+					StopCoroutine(queueReadingRoutine);
+			}
+			catch (Exception ex)
+            {
+				Debug.LogError("Disconnecting Client Failed.");
+            }
+        }
 
 		private IEnumerator ReadingQueuedMessages()
 		{
