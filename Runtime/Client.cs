@@ -71,23 +71,23 @@ namespace Sand
 		}
 
 		public void Disconnect()
-        {
+        	{
 			try
 			{
+				if (queueReadingRoutine != null)
+					StopCoroutine(queueReadingRoutine);
+
 				if (clientReceiveThread != null)
 					clientReceiveThread.Abort();
 
 				if (socketConnection != null)
 					socketConnection.Close();
-
-				if (queueReadingRoutine != null)
-					StopCoroutine(queueReadingRoutine);
 			}
 			catch (Exception ex)
-            {
+            		{
 				Debug.LogError("Disconnecting Client Failed.");
-            }
-        }
+            		}
+        	}
 
 		private IEnumerator ReadingQueuedMessages()
 		{
