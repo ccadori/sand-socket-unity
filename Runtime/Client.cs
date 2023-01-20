@@ -10,6 +10,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Authentication;
 using System.IO;
+using UnityEngine.Events;
 
 namespace Sand
 {
@@ -36,6 +37,7 @@ namespace Sand
 		public bool useTLS = false;
 		public bool leaveInnerStreamOpen = false;
 		public bool validateCert = true;
+		public UnityEvent sandReadingException = new UnityEvent();
 		private string eventDelimiter = "#e#";
 		private string packetDelimiter = "\n";
 
@@ -71,7 +73,7 @@ namespace Sand
 		}
 
 		public void Disconnect()
-        	{
+        {
 			try
 			{
 				if (queueReadingRoutine != null)
@@ -84,10 +86,10 @@ namespace Sand
 					socketConnection.Close();
 			}
 			catch (Exception ex)
-            		{
-				Debug.LogError("Disconnecting Client Failed.");
-            		}
-        	}
+			{
+				Debug.LogError("Disconnecting Client Failed.");	
+			}
+        }
 
 		private IEnumerator ReadingQueuedMessages()
 		{
@@ -131,9 +133,10 @@ namespace Sand
 					}
 				}
 			}
-			catch (SocketException socketException)
-			{
-				Debug.LogError("Socket exception: " + socketException);
+			catch(Exception e)
+            {
+				Debug.LogError("Sand Reading Exception");
+				sandReadingException.Invoke();
 			}
 		}
 
